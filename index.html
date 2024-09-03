@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image search by link!l</title>
+    <style>
+        /* Hacker theme styles */
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #000000;
+            color: #00FF00;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100%;
+            padding: 0 10px;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+        }
+
+        input[type="text"],
+        button {
+            padding: 15px;
+            margin: 5px 0;
+            width: 100%;
+            max-width: 100%;
+            border: 2px solid #00FF00;
+            background-color: #000000;
+            color: #00FF00;
+            font-size: 18px;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        button {
+            cursor: pointer;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #00FF00;
+            color: #000000;
+        }
+
+        .result-links {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .result-links a {
+            display: block;
+            color: #00FF00;
+            text-decoration: none;
+            padding: 10px;
+            background-color: #0f0f0f;
+            border: 2px solid #00FF00;
+            border-radius: 5px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .result-links a:hover {
+            background-color: #00FF00;
+            color: #000000;
+        }
+
+        .error-message {
+            color: #FF3333;
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 600px) {
+            input[type="text"],
+            button {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Image Search Tool</h1>
+        <input type="text" id="imageUrlInput" placeholder="Paste the image link here" />
+        <button id="searchButton" onclick="generateImageSearchLinks()">Search</button>
+        <div class="error-message" id="errorMessage"></div>
+        <div class="result-links" id="results"></div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const inputBox = document.getElementById('imageUrlInput');
+            const searchButton = document.getElementById('searchButton');
+
+            // Focus input box when 'Ctrl + I' is pressed
+            document.addEventListener('keydown', function (event) {
+                if (event.ctrlKey && event.key === 'i') {
+                    inputBox.focus();
+                    event.preventDefault();
+                }
+            });
+
+            // Trigger search when 'Enter' is pressed
+            inputBox.addEventListener('keydown', function (event) {
+                if (event.key === 'Enter') {
+                    searchButton.click();
+                }
+            });
+        });
+
+        function generateImageSearchLinks() {
+            const imageUrl = document.getElementById('imageUrlInput').value.trim();
+            const errorMessage = document.getElementById('errorMessage');
+            const resultsDiv = document.getElementById('results');
+
+            if (!imageUrl) {
+                errorMessage.textContent = 'Please enter a valid image URL.';
+                return;
+            }
+
+            // Reset error message and results
+            errorMessage.textContent = '';
+            resultsDiv.innerHTML = '';
+
+            // Image search URLs for different engines
+            const searchEngines = [
+                {
+                    name: 'Google Images',
+                    url: 'https://lens.google.com/uploadbyurl?url=' + encodeURIComponent(imageUrl)
+                },
+                {
+                    name: 'Bing Images',
+                    url: 'https://www.bing.com/images/search?q=imgurl:' + encodeURIComponent(imageUrl) + '&view=detailv2&iss=sbi&FORM=IRSBIQ'
+                },
+                {
+                    name: 'TinEye',
+                    url: 'https://tineye.com/search?url=' + encodeURIComponent(imageUrl)
+                },
+                {
+                    name: 'Yandex Images',
+                    url: 'https://yandex.com/images/search?rpt=imageview&url=' + encodeURIComponent(imageUrl)
+                },
+                {
+                    name: 'IQDB',
+                    url: 'https://iqdb.org/?url=' + encodeURIComponent(imageUrl)
+                },
+                {
+                    name: 'Baidu Images',
+                    url: 'https://image.baidu.com/n/pc_search?queryImageUrl=' + encodeURIComponent(imageUrl)
+                },
+                {
+                    name: 'Pinterest Visual Search',
+                    url: 'https://www.pinterest.com/pin-builder/?image_url=' + encodeURIComponent(imageUrl)
+                },
+                {
+                    name: 'Sogou Images',
+                    url: 'https://pic.sogou.com/ris?query=' + encodeURIComponent(imageUrl)
+                }
+            ];
+
+            searchEngines.forEach(engine => {
+                const linkElement = document.createElement('a');
+                linkElement.href = engine.url;
+                linkElement.target = '_blank';
+                linkElement.textContent = `Search on ${engine.name}`;
+                resultsDiv.appendChild(linkElement);
+            });
+        }
+    </script>
+</body>
+
+</html>
